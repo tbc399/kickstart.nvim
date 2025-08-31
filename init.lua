@@ -90,6 +90,9 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.keymap.set('n', '<leader>pf', vim.cmd.Ex)
+vim.keymap.set('i', 'jj', '<Esc>')
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -128,6 +131,14 @@ vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
+-- My own options
+vim.o.tabstop = 4
+vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
+
+vim.o.smartindent = true
+
 -- Keep signcolumn on by default
 vim.o.signcolumn = 'yes'
 
@@ -149,7 +160,7 @@ vim.o.splitbelow = true
 --  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
-vim.o.list = true
+vim.o.list = false
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
@@ -194,10 +205,14 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+--vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+--vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+--vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<leader>l', '<C-W>l', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<leader>h', '<C-W>h', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<leader>j', '<C-W>j', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<leader>k', '<C-W>k', { desc = 'Move focus to the upper window' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -428,7 +443,7 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -684,6 +699,50 @@ require('lazy').setup({
         -- ts_ls = {},
         --
 
+        --gopls = { gofumpt = true },
+        ---- pyright = {},
+        ---- rust_analyzer = {},
+        ---- tsserver = {},
+        --pylsp = {
+        --  pylsp = {
+        --    plugins = {
+        --      pycodestyle = {
+        --        ignore = { 'W391' },
+        --        maxLineLenth = 100,
+        --      },
+        --    },
+        --  },
+        --},
+
+        --sqlls = {
+        --  connections = {
+        --    adapter = 'postgres',
+        --  },
+        --},
+
+        --html = {
+        --  filetypes = { 'html', 'templ' },
+        --},
+
+        --htmx = {
+        --  filetypes = { 'html', 'templ' },
+        --},
+
+        --tailwindcss = {
+        --  filetypes = {
+        --    'templ',
+        --    'javascript',
+        --    'html',
+        --  },
+        --  settings = {
+        --    tailwindCSS = {
+        --      includeLanguages = {
+        --        templ = 'html',
+        --      },
+        --    },
+        --  },
+        --},
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -736,6 +795,17 @@ require('lazy').setup({
     end,
   },
 
+  {
+    -- jinja-lsp setup
+    vim.filetype.add {
+      extension = {
+        jinja = 'jinja',
+        jinja2 = 'jinja',
+        j2 = 'jinja',
+      },
+    },
+  },
+
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -769,7 +839,8 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black' },
+        go = { 'gofumpt' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -894,7 +965,25 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'tokyonight-night'
+    end,
+  },
+
+  {
+    'sainnhe/gruvbox-material',
+    priority = 1000,
+    config = function()
+      vim.g.gruvbox_material_background = 'hard'
+      vim.g.gruvbox_material_better_performance = 1
+      -- vim.cmd.colorscheme 'gruvbox-material'
+    end,
+  },
+
+  {
+    'rebelot/kanagawa.nvim',
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme 'kanagawa-dragon'
     end,
   },
 
